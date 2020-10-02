@@ -1,6 +1,2 @@
-libgmp
-libgomp
 libgdal-dev
-libgeos
-libgsl
 libproj-dev 
