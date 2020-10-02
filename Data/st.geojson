@@ -1,0 +1,25 @@
+{
+"type": "FeatureCollection",
+"features": [
+{ "type": "Feature", "properties": { "Istasyon_No": 17192, "Boylam": 33.9987, "Enlem": 38.3705, "Istasyon_Adi": "AKSARAY", "Rakim": 970 }, "geometry": { "type": "Point", "coordinates": [ 33.9987, 38.3705 ] } },
+{ "type": "Feature", "properties": { "Istasyon_No": 17246, "Boylam": 33.2202, "Enlem": 37.1932, "Istasyon_Adi": "KARAMAN", "Rakim": 1018 }, "geometry": { "type": "Point", "coordinates": [ 33.2202, 37.1932 ] } },
+{ "type": "Feature", "properties": { "Istasyon_No": 17248, "Boylam": 34.0485, "Enlem": 37.5255, "Istasyon_Adi": "EREĞLİ", "Rakim": 1046 }, "geometry": { "type": "Point", "coordinates": [ 34.0485, 37.5255 ] } },
+{ "type": "Feature", "properties": { "Istasyon_No": 17900, "Boylam": 32.79, "Enlem": 37.5658, "Istasyon_Adi": "ÇUMRA", "Rakim": 1014 }, "geometry": { "type": "Point", "coordinates": [ 32.79, 37.5658 ] } },
+{ "type": "Feature", "properties": { "Istasyon_No": 17902, "Boylam": 33.526111, "Enlem": 37.714722, "Istasyon_Adi": "KARAPINAR", "Rakim": 996 }, "geometry": { "type": "Point", "coordinates": [ 33.526111, 37.714722 ] } },
+{ "type": "Feature", "properties": { "Istasyon_No": 17250, "Boylam": 34.6795, "Enlem": 37.9587, "Istasyon_Adi": "NİĞDE", "Rakim": 1211 }, "geometry": { "type": "Point", "coordinates": [ 34.6795, 37.9587 ] } },
+{ "type": "Feature", "properties": { "Istasyon_No": 17833, "Boylam": 34.8538, "Enlem": 38.72, "Istasyon_Adi": "AVANOS", "Rakim": 951 }, "geometry": { "type": "Point", "coordinates": [ 34.8538, 38.72 ] } },
+{ "type": "Feature", "properties": { "Istasyon_No": 17835, "Boylam": 34.9144, "Enlem": 38.6218, "Istasyon_Adi": "ÜRGÜP", "Rakim": 1068 }, "geometry": { "type": "Point", "coordinates": [ 34.9144, 38.6218 ] } },
+{ "type": "Feature", "properties": { "Istasyon_No": 17898, "Boylam": 31.849, "Enlem": 37.4267, "Istasyon_Adi": "SEYDİŞEHİR", "Rakim": 1129 }, "geometry": { "type": "Point", "coordinates": [ 31.849, 37.4267 ] } },
+{ "type": "Feature", "properties": { "Istasyon_No": 17906, "Boylam": 34.4867, "Enlem": 37.548, "Istasyon_Adi": "ULUKIŞLA", "Rakim": 1453 }, "geometry": { "type": "Point", "coordinates": [ 34.4867, 37.548 ] } },
+{ "type": "Feature", "properties": { "Istasyon_No": 17191, "Boylam": 32.92186, "Enlem": 38.650578, "Istasyon_Adi": "CİHANBEYLİ", "Rakim": 973 }, "geometry": { "type": "Point", "coordinates": [ 32.92186, 38.650578 ] } },
+{ "type": "Feature", "properties": { "Istasyon_No": 17242, "Boylam": 31.7463, "Enlem": 37.6777, "Istasyon_Adi": "BEYŞEHİR", "Rakim": 1141 }, "geometry": { "type": "Point", "coordinates": [ 31.7463, 37.6777 ] } },
+{ "type": "Feature", "properties": { "Istasyon_No": 17244, "Boylam": 32.574, "Enlem": 37.9837, "Istasyon_Adi": "KONYA HAVALİMANI", "Rakim": 1031 }, "geometry": { "type": "Point", "coordinates": [ 32.574, 37.9837 ] } },
+{ "type": "Feature", "properties": { "Istasyon_No": 17832, "Boylam": 31.894, "Enlem": 38.2763, "Istasyon_Adi": "ILGIN", "Rakim": 1036 }, "geometry": { "type": "Point", "coordinates": [ 31.894, 38.2763 ] } },
+{ "type": "Feature", "properties": { "Istasyon_No": 19105, "Boylam": 31.3381, "Enlem": 37.6747, "Istasyon_Adi": "YENİŞARBADEMLİ\/DEDEGÖL TEPESİ", "Rakim": 1890 }, "geometry": { "type": "Point", "coordinates": [ 31.3381, 37.6747 ] } },
+{ "type": "Feature", "properties": { "Istasyon_No": 18117, "Boylam": 33.5169, "Enlem": 38.1997, "Istasyon_Adi": "AKSARAY\/SULTANHANI", "Rakim": 999 }, "geometry": { "type": "Point", "coordinates": [ 33.5169, 38.1997 ] } },
+{ "type": "Feature", "properties": { "Istasyon_No": 18213, "Boylam": 32.5839, "Enlem": 37.8606, "Istasyon_Adi": "KARATAY\/BAHRİ DAĞDAŞ ARŞ. (TAGEM)", "Rakim": 1011 }, "geometry": { "type": "Point", "coordinates": [ 32.5839, 37.8606 ] } },
+{ "type": "Feature", "properties": { "Istasyon_No": 18481, "Boylam": 33.3592, "Enlem": 38.3086, "Istasyon_Adi": "ESKİL", "Rakim": 985 }, "geometry": { "type": "Point", "coordinates": [ 33.3592, 38.3086 ] } },
+{ "type": "Feature", "properties": { "Istasyon_No": 18488, "Boylam": 32.8792, "Enlem": 38.2989, "Istasyon_Adi": "ALTINEKİN", "Rakim": 1080 }, "geometry": { "type": "Point", "coordinates": [ 32.8792, 38.2989 ] } },
+{ "type": "Feature", "properties": { "Istasyon_No": 17754, "Boylam": 33.0657, "Enlem": 39.0788, "Istasyon_Adi": "KULU", "Rakim": 1005 }, "geometry": { "type": "Point", "coordinates": [ 33.0657, 39.0788 ] } }
+]
+}

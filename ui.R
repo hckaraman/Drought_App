@@ -1,22 +1,41 @@
 library(shiny)
+library(RSQLite)
+library(leaflet)
+library(plotly)
 
-# Define UI for application that plots random distributions 
+conn <- dbConnect(RSQLite::SQLite(), './Data/test.db')
+query = "SELECT DISTINCT Istasyon_No from data ;"
+data = dbGetQuery(conn, query)
+
+
+
+
 shinyUI(pageWithSidebar(
-  
-  # Application title
-  headerPanel("It's Alive!"),
-  
-  # Sidebar with a slider input for number of observations
-  sidebarPanel(
-    sliderInput("bins",
-                "Number of bins:",
-                min = 1,
-                max = 50,
-                value = 30)
-  ),
-  
-  # Show a plot of the generated distribution
+  headerPanel("Drought Analysis"),
+  sidebarPanel(selectInput("Vector", "Select Station", data$Istasyon_No, selected = 17192, multiple = FALSE),
+               selectInput("Freq", "Select Frequency", c(1,3,6,9,12,24,36,48), selected = 9, multiple = FALSE),
+               selectInput("Index", "Select Index", c('SPI','SPEI'), selected = 'SPI', multiple = FALSE),
+               selectInput("PET", "Select PET Formulation", c('Thornthwaite','Hargreaves'), selected = 'Thornthwaite', multiple = FALSE),
+               selectInput("Dist", "Select Distribution", c('log-Logistic','Gamma','PearsonIII'), selected = 'SPI', multiple = FALSE),
+               downloadButton("downloadData", "Download Results")),
   mainPanel(
-    plotOutput("distPlot", height=250)
-  )
-))
+    
+    tabsetPanel(type = "tabs",
+                tabPanel("Data", plotlyOutput(outputId ="data_plot", height = "800px"),
+                ),
+                tabPanel("Data Summary",
+                         fluidRow(
+                           plotOutput("mary"),
+                           verbatimTextOutput("at"))),
+                tabPanel("Data Summary", DT::dataTableOutput("ysummary"),verbatimTextOutput("total"),
+                         plotlyOutput("totalplot")),
+                tabPanel("SPI Plot", plotOutput("main_plot", height = "800px")),
+                tabPanel("SPI Summary", verbatimTextOutput("summary")),
+                tabPanel("PET Plot", plotlyOutput(outputId ="pet_plot", height = "500px")),
+                tabPanel("Map", leafletOutput("mymap",height = "800px"))
+                
+                
+                #plotOutput("main_plot", height = "800px")
+                
+    )
+  )))

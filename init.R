@@ -1,3 +1,3 @@
-Packages <- c("ggplot2","sf","shinydashboard","shiny","plotly","rgdal","leaflet","dplyr","leaflet.extras","vroom","raster")
+Packages <- c("RSQLite","stringr","SPEI","ggplot2","zoo","Kendall","DT","trend","ggpubr","leaflet","plotly")
 
 install.packages(Packages)
