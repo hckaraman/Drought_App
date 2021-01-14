@@ -3,7 +3,7 @@ library(RSQLite)
 library(leaflet)
 library(plotly)
 
-conn <- dbConnect(RSQLite::SQLite(), './Data/test.db')
+conn <- dbConnect(RSQLite::SQLite(), './Data/data.db')
 query = "SELECT DISTINCT Istasyon_No from data ;"
 data = dbGetQuery(conn, query)
 
@@ -22,11 +22,11 @@ shinyUI(pageWithSidebar(
     
     tabsetPanel(type = "tabs",
                 tabPanel("Data", plotlyOutput(outputId ="data_plot", height = "800px"),
-                ),
+                         ),
                 tabPanel("Data Summary",
                          fluidRow(
-                           plotOutput("mary"),
-                           verbatimTextOutput("at"))),
+                         plotOutput("mary"),
+                         verbatimTextOutput("at"))),
                 tabPanel("Data Summary", DT::dataTableOutput("ysummary"),verbatimTextOutput("total"),
                          plotlyOutput("totalplot")),
                 tabPanel("SPI Plot", plotOutput("main_plot", height = "800px")),
@@ -34,8 +34,8 @@ shinyUI(pageWithSidebar(
                 tabPanel("PET Plot", plotlyOutput(outputId ="pet_plot", height = "500px")),
                 tabPanel("Map", leafletOutput("mymap",height = "800px"))
                 
-                
-                #plotOutput("main_plot", height = "800px")
-                
+    
+    #plotOutput("main_plot", height = "800px")
+    
     )
-  )))
+)))

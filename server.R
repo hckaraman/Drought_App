@@ -1,3 +1,6 @@
+# packages <- c("shiny","leaflet","plotly","RSQLite","stringr","SPEI","ggplot2","zoo","Kendall","DT","trend","ggpubr")
+# install.packages(packages)
+
 library(shiny)
 library(RSQLite)
 library(stringr)
@@ -12,7 +15,7 @@ library("ggpubr")
 
 
 shinyServer(function(input, output) {
-  conn <- dbConnect(RSQLite::SQLite(), './Data/test.db')
+  conn <- dbConnect(RSQLite::SQLite(), './Data/data.db')
   v<- function(freq) {
     ist <-  input$Vector
     
@@ -21,8 +24,9 @@ shinyServer(function(input, output) {
     ON t1.YEAR = t2.YEAR and t1.MONTH = t2.MONTH JOIN (SELECT d.YIL as YEAR  ,d.AY as MONTH  ,d.value as  TMAX from data d where d.Istasyon_No = ${ist} and d.var = 'MAKSIMUM_SICAKLIK_C' ) t3
     ON t1.YEAR = t3.YEAR and t1.MONTH = t3.MONTH JOIN (SELECT d.YIL as YEAR  ,d.AY as MONTH  ,d.value as  TMIN from data d where d.Istasyon_No = ${ist} and d.var = 'MINIMUM_SICAKLIK_C') t4
     ON t1.YEAR = t4.YEAR and t1.MONTH = t4.MONTH")
-    conn <- dbConnect(RSQLite::SQLite(), './Data/test.db')
+    conn <- dbConnect(RSQLite::SQLite(), './Data/data.db')
     data = dbGetQuery(conn, query)
+    
     
     query = str_interp("SELECT DISTINCT d.Enlem from data d where d.Istasyon_No = ${ist};")
     lat = dbGetQuery(conn, query)
@@ -61,7 +65,7 @@ ON t1.YIL = t2.YIL")
     results$spei1 <- spei1
     results$data <- data
     results$datay <- datay
-    
+          
     return(results)  
   }
   
@@ -154,7 +158,7 @@ ON t1.YIL = t2.YIL")
         geom_ribbon(aes(x = Date, ymax = TMAX, ymin = TMIN), alpha = 0.6, fill = "skyblue")+
         scale_y_continuous("Mean Temperature [°C]") + 
         annotate("text",  x=Inf, y = Inf, label = st, vjust=1, hjust=1)
-      
+    
       
       q2 <- ggplot(data)  + 
         geom_bar(aes(x=Date, y=PRCP),stat="identity", fill="tan1", colour="sienna3")+
@@ -179,7 +183,7 @@ ON t1.YIL = t2.YIL")
   
   output$ysummary <- DT::renderDataTable({
     
-    # v(input$Freq)$datay
+   # v(input$Freq)$datay
     v(input$Freq)$datay
     
   })
@@ -226,88 +230,88 @@ ON t1.YIL = t2.YIL")
   })
   
   output$at <- renderText({
-    df <- v(input$Freq)
-    data <- df$data
-    
-    
-    p <- shapiro.test(data$PRCP)
-    W <- as.numeric(p[1][1])
-    P <- as.numeric(p[2][1])
-    
-    p <- shapiro.test(data$TMED)
-    Wt <- as.numeric(p[1][1])
-    Pt <- as.numeric(p[2][1])
-    
-    sp <- sens.slope(data$PRCP,conf.level = 0.95)
-    sp_t <- str_interp("Sen's slope = ${as.numeric(sp$estimates)} for precipitation with %95 confidence interval")
-    
-    st <- sens.slope(data$TMED,conf.level = 0.95)
-    st_t <- str_interp("Sen's slope = ${as.numeric(st$estimates)} for temperature  %95 confidence interval")
-    
-    tr <- MannKendall(data$TMED)
-    tau <- formatC(tr$tau[1], digits = 5, format = "f")
-    pside <- formatC(tr$sl[1], digits = 5, format = "f")
-    
-    if (pside < 0.05){
-      st_m <- str_interp("There is no trend present in temperature data based on Mann-Kendall test\
+   df <- v(input$Freq)
+   data <- df$data
+   
+   
+   p <- shapiro.test(data$PRCP)
+   W <- as.numeric(p[1][1])
+   P <- as.numeric(p[2][1])
+   
+   p <- shapiro.test(data$TMED)
+   Wt <- as.numeric(p[1][1])
+   Pt <- as.numeric(p[2][1])
+   
+   sp <- sens.slope(data$PRCP,conf.level = 0.95)
+   sp_t <- str_interp("Sen's slope = ${as.numeric(sp$estimates)} for precipitation with %95 confidence interval")
+   
+   st <- sens.slope(data$TMED,conf.level = 0.95)
+   st_t <- str_interp("Sen's slope = ${as.numeric(st$estimates)} for temperature  %95 confidence interval")
+   
+   tr <- MannKendall(data$TMED)
+   tau <- formatC(tr$tau[1], digits = 5, format = "f")
+   pside <- formatC(tr$sl[1], digits = 5, format = "f")
+   
+   if (pside < 0.05){
+     st_m <- str_interp("There is no trend present in temperature data based on Mann-Kendall test\
                          tau = ${tau} pvalue = ${pside}")
-    }
-    else{
-      if (tau > 0)
-      {
-        st_m <- str_interp("There is positive trend in temperature data based on Mann-Kendall test\
+   }
+   else{
+     if (tau > 0)
+     {
+       st_m <- str_interp("There is positive trend in temperature data based on Mann-Kendall test\
                          tau = ${tau} pvalue = ${pside}")
-      }
-      else
-      {
-        st_m <- str_interp("There is negative trend in temperature data based on Mann-Kendall test\
+     }
+     else
+     {
+       st_m <- str_interp("There is negative trend in temperature data based on Mann-Kendall test\
                          tau = ${tau} pvalue = ${pside}")
-      }
-    }
-    
-    tr_p <- MannKendall(data$PRCP)
-    tau_p <- formatC(tr_p$tau[1], digits = 5, format = "f")
-    pside_p <- formatC(tr_p$sl[1], digits = 5, format = "f")
-    
-    
-    if (pside_p < 0.05){
-      st_p <- str_interp("There is no trend present in precipitation data based on Mann-Kendall test \
+     }
+   }
+   
+   tr_p <- MannKendall(data$PRCP)
+   tau_p <- formatC(tr_p$tau[1], digits = 5, format = "f")
+   pside_p <- formatC(tr_p$sl[1], digits = 5, format = "f")
+   
+   
+   if (pside_p < 0.05){
+     st_p <- str_interp("There is no trend present in precipitation data based on Mann-Kendall test \
                          tau = ${tau_p} pvalue = ${pside_p}")
-    }
-    else{
-      if (tau_p > 0)
-      {
-        st_p <- str_interp("There is positive trend in precipitation data based on Mann-Kendall test \
+   }
+   else{
+     if (tau_p > 0)
+     {
+       st_p <- str_interp("There is positive trend in precipitation data based on Mann-Kendall test \
                          tau = ${tau_p} pvalue = ${pside_p}")
-      }
-      else
-      {
-        st_p <- str_interp("There is negative trend in precipitation data based on Mann-Kendall test\
+     }
+     else
+     {
+       st_p <- str_interp("There is negative trend in precipitation data based on Mann-Kendall test\
                          tau = ${tau_p} pvalue = ${pside_p}")
-      }
-    }
-    
-    
-    data <- df$spei1
-    p <- shapiro.test(data$fitted)
-    Ws <- as.numeric(p[1][1])
-    Ps <- as.numeric(p[2][1])
-    
-    
-    st1 <- str_interp("Shapiro-Wilk normality test for precipitation \
+     }
+   }
+   
+   
+   data <- df$spei1
+   p <- shapiro.test(data$fitted)
+   Ws <- as.numeric(p[1][1])
+   Ps <- as.numeric(p[2][1])
+   
+   
+   st1 <- str_interp("Shapiro-Wilk normality test for precipitation \
    W = ${W} pvalue = ${P} \ ")
-    
-    st2 <- str_interp("Shapiro-Wilk normality test for temperature \
+   
+   st2 <- str_interp("Shapiro-Wilk normality test for temperature \
    W = ${Wt} pvalue = ${Pt} \ ")
-    
-    st3 <- str_interp("Shapiro-Wilk normality test for spi \
+   
+   st3 <- str_interp("Shapiro-Wilk normality test for spi \
     W = ${Ws} pvalue = ${Ps} \ ")
-    
-    addr = paste(st1,  st2, st3, sp_t,st_t,st_p,st_m, sep="\n")
-    print(addr[1])
-    
-    
-    
+   
+   addr = paste(st1,  st2, st3, sp_t,st_t,st_p,st_m, sep="\n")
+   print(addr[1])
+   
+
+   
   })
   
   
@@ -347,7 +351,7 @@ ON t1.YIL = t2.YIL")
     
     fig
   })
-  
+    
   output$downloadData <- downloadHandler(
     filename = function() {
       paste(input$Index, ".csv", sep = "")
