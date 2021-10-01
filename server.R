@@ -13,22 +13,22 @@ library(trend)
 library("ggpubr")
 
 
-
+conn <- dbConnect(RSQLite::SQLite(), './Data/data.db')
 shinyServer(function(input, output) {
-  conn <- dbConnect(RSQLite::SQLite(), './Data/data.db')
+  
   v<- function(freq) {
     ist <-  input$Vector
     
-    query = str_interp("SELECT t1.YEAR,t1.MONTH,t1.PRCP,t3.TMAX,t4.TMIN ,t2.TMED from(SELECT d.YIL as YEAR  ,d.AY as MONTH  ,d.value as  PRCP from data d where d.Istasyon_No = ${ist} and d.var LIKE '%YAGIS%') t1
-    JOIN (SELECT d.YIL as YEAR,d.AY as MONTH,d.value as  TMED from data d where d.Istasyon_No = ${ist} and d.var = 'ORTALAMA_SICAKLIK_°C') t2
-    ON t1.YEAR = t2.YEAR and t1.MONTH = t2.MONTH JOIN (SELECT d.YIL as YEAR  ,d.AY as MONTH  ,d.value as  TMAX from data d where d.Istasyon_No = ${ist} and d.var = 'MAKSIMUM_SICAKLIK_C' ) t3
-    ON t1.YEAR = t3.YEAR and t1.MONTH = t3.MONTH JOIN (SELECT d.YIL as YEAR  ,d.AY as MONTH  ,d.value as  TMIN from data d where d.Istasyon_No = ${ist} and d.var = 'MINIMUM_SICAKLIK_C') t4
+    query = str_interp("SELECT t1.YEAR,t1.MONTH,t1.PRCP,t3.TMAX,t4.TMIN ,t2.TMED from(SELECT d.YIL as YEAR  ,d.AY as MONTH  ,d.value as  PRCP from data d where d.Istasyon_No = '${ist}' and d.var LIKE '%YAGIS%') t1
+    JOIN (SELECT d.YIL as YEAR,d.AY as MONTH,d.value as  TMED from data d where d.Istasyon_No = '${ist}' and d.var = 'ORTALAMA_SICAKLIK_°C') t2
+    ON t1.YEAR = t2.YEAR and t1.MONTH = t2.MONTH JOIN (SELECT d.YIL as YEAR  ,d.AY as MONTH  ,d.value as  TMAX from data d where d.Istasyon_No = '${ist}' and d.var = 'MAKSIMUM_SICAKLIK_C' ) t3
+    ON t1.YEAR = t3.YEAR and t1.MONTH = t3.MONTH JOIN (SELECT d.YIL as YEAR  ,d.AY as MONTH  ,d.value as  TMIN from data d where d.Istasyon_No = '${ist}' and d.var = 'MINIMUM_SICAKLIK_C') t4
     ON t1.YEAR = t4.YEAR and t1.MONTH = t4.MONTH")
     conn <- dbConnect(RSQLite::SQLite(), './Data/data.db')
     data = dbGetQuery(conn, query)
     
     
-    query = str_interp("SELECT DISTINCT d.Enlem from data d where d.Istasyon_No = ${ist};")
+    query = str_interp("SELECT DISTINCT d.Enlem from data d where d.Istasyon_No = '${ist}';")
     lat = dbGetQuery(conn, query)
     
     
@@ -44,7 +44,14 @@ shinyServer(function(input, output) {
     
     data$BAL <- data$PRCP-data$PET
     
+    
     datats <- ts(data[,-c(1,2)], end=c(2020,8), frequency=12)
+    
+    if (ist == '17238_RCP4.5' | ist == '17238_RCP8.5' ) {
+      datats <- ts(data[,-c(1,2)], start=c(1970, 1), end=c(2099, 11), frequency=12)
+      
+      # datats <- ts(data[,-c(1,2)], end=c(2099,11), frequency=12)
+    }
     
     if(input$Index == 'SPEI'){
       spei1 <- spei(datats[,'BAL'], freq,distribution = input$Dist)
@@ -55,9 +62,9 @@ shinyServer(function(input, output) {
     data$Date <- as.yearmon(paste(data$YEAR, data$MONTH), "%Y %m")
     
     query = str_interp("SELECT t1.*,t2.Total_Precipitation FROM 
-(SELECT d.YIL ,AVG(value) as Mean_Temperature from data d where d.Istasyon_No = ${ist} and d.var = 'ORTALAMA_SICAKLIK_°C' group by d.Istasyon_No,d.YIL) t1
+(SELECT d.YIL ,AVG(value) as Mean_Temperature from data d where d.Istasyon_No = '${ist}' and d.var = 'ORTALAMA_SICAKLIK_°C' group by d.Istasyon_No,d.YIL) t1
 JOIN
-(SELECT d.YIL ,SUM(value) as Total_Precipitation from data d where d.Istasyon_No = ${ist} and d.var LIKE '%YAGIS%' group by d.Istasyon_No,d.YIL) t2
+(SELECT d.YIL ,SUM(value) as Total_Precipitation from data d where d.Istasyon_No = '${ist}' and d.var LIKE '%YAGIS%' group by d.Istasyon_No,d.YIL) t2
 ON t1.YIL = t2.YIL")
     datay = dbGetQuery(conn, query)
     
