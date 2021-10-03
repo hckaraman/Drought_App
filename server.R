@@ -1,5 +1,7 @@
 # packages <- c("shiny","leaflet","plotly","RSQLite","stringr","SPEI","ggplot2","zoo","Kendall","DT","trend","ggpubr")
 # install.packages(packages)
+packages <- c("openxlsx")
+install.packages(setdiff(packages, rownames(installed.packages())))  
 
 library(shiny)
 library(RSQLite)
@@ -11,6 +13,7 @@ library(Kendall)
 library(DT)
 library(trend)
 library("ggpubr")
+library(openxlsx)
 
 
 conn <- dbConnect(RSQLite::SQLite(), './Data/data.db')
@@ -361,16 +364,31 @@ ON t1.YIL = t2.YIL")
     
   output$downloadData <- downloadHandler(
     filename = function() {
-      paste(input$Index, ".csv", sep = "")
+      paste("Results.xlsx", sep = '')
     },
     content = function(file) {
       
-      spei1 <- v(input$Freq)$spei1
+      data = v(input$Freq)
+      spei1 <- data$spei1
       res <- data.frame(as.matrix(spei1$fitted), date=time(spei1$fitted))
       res$year <- trunc(res$date)
       res$month <- (res$date - res$year) * 12 + 1
       
-      write.csv(res, file, row.names = FALSE)
+      
+      
+      # write.csv(res, file, row.names = FALSE)
+
+      list_of_datasets <-
+        list(
+          "SPI_Data" = res,
+          "Data" = data$data,
+          "Yearly_Data" = data$datay
+        )
+      file.remove('./Data/Results.xlsx')
+      write.xlsx(list_of_datasets, file = './Data/Results.xlsx')
+      myfile <- srcpath <- './Data/Results.xlsx'
+      file.copy(myfile, file)
+      
     }
   )
   
