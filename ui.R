@@ -32,7 +32,20 @@ shinyUI(pageWithSidebar(
                 tabPanel("SPI Plot", plotOutput("main_plot", height = "800px")),
                 tabPanel("SPI Summary", verbatimTextOutput("summary")),
                 tabPanel("PET Plot", plotlyOutput(outputId ="pet_plot", height = "500px")),
-                tabPanel("Map", leafletOutput("mymap",height = "800px"))
+                tabPanel("Map", leafletOutput("mymap",height = "800px")),
+                tabPanel("Update db",     fluidRow( column(6,fileInput(
+                  'file1',
+                  'Choose CSV File',
+                  accept = c('text/csv',
+                             'text/comma-separated-values,text/plain',
+                             '.csv')
+                ))),
+                fluidRow( 
+                  DT::dataTableOutput("update")
+                )
+                
+                
+                )
                 
     
     #plotOutput("main_plot", height = "800px")

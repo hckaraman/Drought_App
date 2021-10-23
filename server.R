@@ -1,7 +1,3 @@
-# packages <- c("shiny","leaflet","plotly","RSQLite","stringr","SPEI","ggplot2","zoo","Kendall","DT","trend","ggpubr")
-# install.packages(packages)
-packages <- c("openxlsx")
-install.packages(setdiff(packages, rownames(installed.packages())))  
 
 library(shiny)
 library(RSQLite)
@@ -18,6 +14,43 @@ library(openxlsx)
 
 conn <- dbConnect(RSQLite::SQLite(), './Data/data.db')
 shinyServer(function(input, output) {
+  
+  data <- reactive({ 
+    req(input$file1) ## ?req #  require that the input is available
+    
+    inFile <- input$file1 
+    
+    # tested with a following dataset: write.csv(mtcars, "mtcars.csv")
+    # and                              write.csv(iris, "iris.csv")
+    df <- vroom(inFile$datapath)
+    
+    
+    tryCatch()
+    dbWriteTable(conn, 'data', header = F, df, append = T)
+    
+    # Update inputs (you could create an observer with both updateSel...)
+    # You can also constraint your choices. If you wanted select only numeric
+    # variables you could set "choices = sapply(df, is.numeric)"
+    # It depends on what do you want to do later on.
+    # 
+    # updateSelectInput(session, inputId = 'xcol', label = 'X Variable',
+    #                   choices = names(df), selected = names(df))
+    # updateSelectInput(session, inputId = 'ycol', label = 'Y Variable',
+    #                   choices = names(df), selected = names(df)[2])
+    
+    
+    
+    
+    return(df)
+  })
+  
+  
+    output$update <- DT::renderDataTable({
+      
+      # v(input$Freq)$datay
+      data()
+      
+    })
   
   v<- function(freq) {
     ist <-  input$Vector
