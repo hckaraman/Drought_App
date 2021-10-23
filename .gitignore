@@ -2,5 +2,5 @@
 *.Rhistory
 *.Rproj.user
 .idea
-Data
 renv
+.Rproj.user

@@ -1,40 +1,86 @@
 
-library(shiny)
-library(RSQLite)
-library(stringr)
-library('SPEI')
-library(ggplot2)
-library('zoo')
-library(Kendall)
-library(DT)
-library(trend)
-library("ggpubr")
-library(openxlsx)
 
-
-conn <- dbConnect(RSQLite::SQLite(), './Data/data.db')
-shinyServer(function(input, output) {
+shinyServer(function(session,input, output) {
   
   data <- reactive({ 
     req(input$file1) ## ?req #  require that the input is available
     
     inFile <- input$file1 
     
-    # tested with a following dataset: write.csv(mtcars, "mtcars.csv")
-    # and                              write.csv(iris, "iris.csv")
+
     df <- vroom(inFile$datapath)
+    df$Istasyon_No <- as.character(df$Istasyon_No)
+    
+    filenames <- names(df)
+    diffnames <- setdiff(names,filenames)
+    
+    varfile <- unique(df$var)
+    diff <- setdiff(varfile,varlist)
+    station <- df$Istasyon_No[1]
     
     
-    tryCatch()
-    dbWriteTable(conn, 'data', header = F, df, append = T)
+
+      
     
-    # Update inputs (you could create an observer with both updateSel...)
-    # You can also constraint your choices. If you wanted select only numeric
-    # variables you could set "choices = sapply(df, is.numeric)"
-    # It depends on what do you want to do later on.
+
+    if (length(diff) != 0 ) {
+      dialog_text <-
+        paste(paste(diff), "<br>", "variable could not found in dataset. Please Check !!")
+      showModal(modalDialog(HTML(dialog_text),
+                            easyClose = TRUE))
+    } else if (length(diffnames) != 0) {
+      dialog_text <-
+        paste(paste(diff), "<br>", "header names is not correct. Please Check !!")
+      showModal(modalDialog(HTML(dialog_text),
+                            easyClose = TRUE))
+    } 
+    else {
+      showModal(modalDialog(HTML("Data is free of error, yay!"),
+                            easyClose = TRUE))
+    }
+    
+    
+    print("a")
+    
+    tryCatch(
+      expr = {
+        
+        if (length(intersect(stations$Istasyon_No,station)) == 0){
+          dbWriteTable(conn, 'data', header = F, df, append = T)
+          query <- "SELECT DISTINCT Istasyon_No from data ;"
+          stations <-  dbGetQuery(conn, query)
+          station <- paste(unique(df$Istasyon_No))
+          updateSelectInput(session, inputId = 'Vector', label = "Select Station",
+                            choices = stations, selected = station)
+          dialog_text <-
+            paste("Data has been added to database, Please select Station No !")
+          showModal(modalDialog(HTML(dialog_text),
+                                easyClose = TRUE))
+        } else {
+          dialog_text <-
+            paste("Data has already in database, skipping ...")
+          showModal(modalDialog(HTML(dialog_text),
+                                easyClose = TRUE))
+        }
+      },
+      error = function(e){ 
+        dialog_text <-
+          paste(paste(e), "<br>", "Error found. Please Check dataset !!")
+        showModal(modalDialog(HTML(dialog_text),
+                              easyClose = TRUE))
+      },
+      warning = function(w){
+        # (Optional)
+        # Do this if an warning is caught...
+      },
+      finally = {
+        # (Optional)
+        # Do this at the end before quitting the tryCatch structure...
+      }
+    )
+    
     # 
-    # updateSelectInput(session, inputId = 'xcol', label = 'X Variable',
-    #                   choices = names(df), selected = names(df))
+    
     # updateSelectInput(session, inputId = 'ycol', label = 'Y Variable',
     #                   choices = names(df), selected = names(df)[2])
     
@@ -46,10 +92,7 @@ shinyServer(function(input, output) {
   
   
     output$update <- DT::renderDataTable({
-      
-      # v(input$Freq)$datay
       data()
-      
     })
   
   v<- function(freq) {
@@ -128,6 +171,8 @@ ON t1.YIL = t2.YIL")
       
       plot(v(input$Freq)$spei1,main=str_interp('Station ${input$Vector}, ${input$Index}'),xlab="Year")
     })
+  
+  
   
   
   output$pet_plot <- 
@@ -222,6 +267,16 @@ ON t1.YIL = t2.YIL")
   
   output$summary <- renderPrint({
     summary(v(input$Freq)$spei1)
+  })
+  
+  output$updatetable <- renderPrint({
+    paste("Uploaded dataset should be similar to template in below. Pay attention to table headers and variables in rows !!")
+  })
+  
+  output$templatetable <- DT::renderDataTable({
+    # paste("Data should be in following fortmat \n
+    #       headers -> ",template)
+    template
   })
   
   output$ysummary <- DT::renderDataTable({
