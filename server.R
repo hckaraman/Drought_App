@@ -124,13 +124,13 @@ shinyServer(function(session,input, output) {
     data$BAL <- data$PRCP-data$PET
     
     
-    datats <- ts(data[,-c(1,2)], end=c(2020,8), frequency=12)
+    datats <- ts(data[,-c(1,2)], start=c(min(data$YEAR), 1),frequency=12)
     
-    if (ist == '17238_RCP4.5' | ist == '17238_RCP8.5' ) {
-      datats <- ts(data[,-c(1,2)], start=c(1970, 1), end=c(2099, 11), frequency=12)
-      
-      # datats <- ts(data[,-c(1,2)], end=c(2099,11), frequency=12)
-    }
+    # if (ist == '17238_RCP4.5' | ist == '17238_RCP8.5' ) {
+    #   # datats <- ts(data[,-c(1,2)], start=c(1970, 1), end=c(2099, 11), frequency=12)
+    #   datats <- ts(data[,-c(1,2)], start=c(1970, 1), frequency=12)
+    #   # datats <- ts(data[,-c(1,2)], end=c(2099,11), frequency=12)
+    # }
     
     if(input$Index == 'SPEI'){
       spei1 <- spei(datats[,'BAL'], freq,distribution = input$Dist)

@@ -4,3 +4,5 @@
 .idea
 renv
 .Rproj.user
+
+Data/drought_rcm_bias_adjusted_burdur/
