@@ -2,6 +2,7 @@ library(shiny)
 library(RSQLite)
 library(leaflet)
 library(plotly)
+library(shinycssloaders)
 
 shinyUI(pageWithSidebar(
   headerPanel("Drought Analysis"),
@@ -14,18 +15,18 @@ shinyUI(pageWithSidebar(
   mainPanel(
     
     tabsetPanel(type = "tabs",
-                tabPanel("Data", plotlyOutput(outputId ="data_plot", height = "800px"),
+                tabPanel("Data", withSpinner(plotlyOutput(outputId ="data_plot", height = "800px"),type = 6),
                          ),
                 tabPanel("Data Summary",
                          fluidRow(
-                         plotOutput("mary"),
+                           withSpinner(plotOutput("mary"),type = 6),
                          verbatimTextOutput("at"))),
-                tabPanel("Data Summary", DT::dataTableOutput("ysummary"),verbatimTextOutput("total"),
+                tabPanel("Data Summary", withSpinner(DT::dataTableOutput("ysummary"),type = 6),verbatimTextOutput("total"),
                          plotlyOutput("totalplot")),
-                tabPanel("SPI Plot", plotOutput("main_plot", height = "800px")),
-                tabPanel("SPI Summary", verbatimTextOutput("summary")),
-                tabPanel("PET Plot", plotlyOutput(outputId ="pet_plot", height = "500px")),
-                tabPanel("Map", leafletOutput("mymap",height = "800px")),
+                tabPanel("SPI Plot", withSpinner(plotOutput("main_plot", height = "800px"),type = 6)),
+                tabPanel("SPI Summary", withSpinner(verbatimTextOutput("summary"),type = 6)),
+                tabPanel("PET Plot", withSpinner(plotlyOutput(outputId ="pet_plot", height = "500px"),type = 6)),
+                tabPanel("Map", withSpinner(leafletOutput("mymap",height = "800px"),type = 6)),
                 tabPanel("Update db",     fluidRow( column(6,fileInput(
                   'file1',
                   'Choose CSV File',
