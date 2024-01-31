@@ -131,7 +131,8 @@ shinyServer(function(session,input, output) {
     #   datats <- ts(data[,-c(1,2)], start=c(1970, 1), frequency=12)
     #   # datats <- ts(data[,-c(1,2)], end=c(2099,11), frequency=12)
     # }
-    
+
+    freq <- as.numeric(freq)
     if(input$Index == 'SPEI'){
       spei1 <- spei(datats[,'BAL'], freq,distribution = input$Dist)
     } else {
@@ -297,10 +298,11 @@ ON t1.YIL = t2.YIL")
   })
   
   output$mary <- renderPlot({
-    df = v(input$Freq)
+    df = v(as.numeric(input$Freq))
     data = df$data
     dataspi = df$spei1
     dataspi <- data.frame(as.matrix(dataspi$fitted))
+    names(dataspi) <- c("data")
     
     p1 <- ggdensity(data, x = "PRCP", fill = "red") +
       scale_x_continuous(limits = c(-1, 50)) +
@@ -314,11 +316,11 @@ ON t1.YIL = t2.YIL")
     
     p4 <- ggqqplot(data, x = "TMED", fill = "red")
     
-    p5 <- ggdensity(dataspi, x = "Series.1", fill = "red") +
+    p5 <- ggdensity(dataspi, x = "data", fill = "red") +
       scale_x_continuous(limits = c(-1, 50)) +
       stat_overlay_normal_density(color = "red", linetype = "dashed")
     
-    p6 <- ggqqplot(dataspi, x = "Series.1", fill = "red")
+    p6 <- ggqqplot(dataspi, x = "data", fill = "red")
     
     p7 <- ggarrange(p1, p2, p3,p4,p5,p6,
                     labels = c("A", "B","C","D","E","F"),
